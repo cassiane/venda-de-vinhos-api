@@ -17,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 import com.project.vendadevinhos.api.entities.Cliente;
 import com.project.vendadevinhos.api.response.Response;
 import com.project.vendadevinhos.services.ClienteService;
-import com.project.vendadevinhos.services.HistoricoComprasService;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -33,6 +32,8 @@ public class ClienteController {
 		RestTemplate restTemplate = new RestTemplate();
 		List<Cliente> clientes = Arrays
 				.asList(restTemplate.getForObject("http://www.mocky.io/v2/598b16291100004705515ec5", Cliente[].class));
+		clientes.forEach(cliente -> cliente.setCpf(cliente.getCpf().replace(".", "")));
+		clientes.forEach(cliente -> cliente.setCpf(cliente.getCpf().replace("-", "")));
 		clientes.forEach(cliente -> clienteService.persistir(cliente));
 
 		return HttpStatus.OK;

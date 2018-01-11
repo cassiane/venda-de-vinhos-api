@@ -3,11 +3,11 @@ package com.project.vendadevinhos.api.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.vendadevinhos.api.entities.Produto;
+import com.project.vendadevinhos.api.entities.Item;
 
 @Transactional(readOnly = true)
-public interface ProdutoRepository extends JpaRepository<Produto, Long>{
+public interface ProdutoRepository extends JpaRepository<Item, Long>{
 
-	Produto findByProduto(String produto);
+	Item findByProduto(String produto);
 
 }

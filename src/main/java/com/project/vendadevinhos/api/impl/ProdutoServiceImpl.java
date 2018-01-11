@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.project.vendadevinhos.api.entities.Produto;
+import com.project.vendadevinhos.api.entities.Item;
 import com.project.vendadevinhos.api.repositories.ProdutoRepository;
 import com.project.vendadevinhos.services.ProdutoService;
 
@@ -15,17 +15,17 @@ public class ProdutoServiceImpl implements ProdutoService{
 	private ProdutoRepository produtoRepository;
 	
 	@Override
-	public Produto persistir(Produto produto) {
+	public Item persistir(Item produto) {
 		return produtoRepository.save(produto);
 	}
 
 	@Override
-	public Produto findByProduto(String produto) {
+	public Item findByProduto(String produto) {
 		return produtoRepository.findByProduto(produto);
 	}
 
 	@Override
-	public List<Produto> listarTodos() {
+	public List<Item> listarTodos() {
 		return produtoRepository.findAll();
 	}
 

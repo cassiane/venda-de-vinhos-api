@@ -1,0 +1,80 @@
+CREATE TABLE cliente(
+	id bigint(20) not null, 
+	nome varchar(255) not null,
+	cpf varchar(255) not null
+) ENGINE=InnoDB default charset = utf8;
+
+create table historico_compras (
+	id bigint(20) not null, 
+	codigo varchar(255) not null,
+	data varchar(10) not null,	
+	cliente_id bigint(20) default null	
+) ENGINE=InnoDB default charset = utf8;
+
+create table item ( 
+	id bigint(20) not null,
+	produto varchar(255) not null,
+	variedade varchar(255) not null,
+	pais varchar(255) not null,
+	categoria varchar(255) not null,
+	safra varchar(5) not null,
+	preco float(4,2) not null
+) ENGINE=InnoDB default charset = utf8;
+
+create table itens (
+	id bigint(20) not null, 
+	item_id bigint(20) default null,
+	historico_id bigint(20) default null
+) ENGINE=InnoDB default charset = utf8;
+
+
+
+
+--
+-- Indexes for table cliente
+--
+alter table cliente add primary key(id);
+
+--
+-- Indexes for table historico_compras
+--
+alter table historico_compras add primary key(id), 
+ add key fk_cliente_id (cliente_id);
+
+--
+-- Indexes for table item
+--
+alter table item add primary key(id);
+
+--
+-- Indexes for table itens
+--
+alter table itens add primary key(id),
+	add key fk_item_id (item_id),
+	add key fk_historico_compras_id (historico_compras_id);
+ 
+
+--
+-- Auto increment for table historico
+--
+alter table historico_compras modify id bigint(20) not null auto_increment;
+
+--
+-- Auto increment for table item
+--
+alter table item modify id bigint(20) not null auto_increment;
+
+-- Auto increment for table itens
+--
+alter table itens modify id bigint(20) not null auto_increment;
+
+--
+-- Constraints for table historico_compras
+--
+alter table historico_compras add constraint cliente foreign key(cliente_id) references cliente (id);
+
+--
+-- Constraints for table itens
+--
+alter table itens add constraint historico foreign key(historico_compras_id) references historico_compras (id);
+alter table itens add constraint item foreign key(item_id) references item (id);

@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,10 +16,13 @@ import org.springframework.web.client.RestTemplate;
 
 import com.project.vendadevinhos.api.dtos.HistoricoDto;
 import com.project.vendadevinhos.api.dtos.ProdutoDto;
+import com.project.vendadevinhos.api.entities.Cliente;
 import com.project.vendadevinhos.api.entities.HistoricoCompras;
-import com.project.vendadevinhos.api.entities.Produto;
-import com.project.vendadevinhos.api.response.Response;
+import com.project.vendadevinhos.api.entities.Item;
+import com.project.vendadevinhos.api.entities.Itens;
+import com.project.vendadevinhos.services.ClienteService;
 import com.project.vendadevinhos.services.HistoricoComprasService;
+import com.project.vendadevinhos.services.ItensService;
 import com.project.vendadevinhos.services.ProdutoService;
 
 @RestController
@@ -31,21 +33,25 @@ public class HistoricoController {
 
 	@Autowired
 	private HistoricoComprasService historicoComprasService;
-	
+
+	@Autowired
+	private ClienteService clienteService;
+
 	@Autowired
 	private ProdutoService produtoService;
+
+	@Autowired
+	private ItensService itensService;
 
 	@PostMapping(value = "/inicializar")
 	public HttpStatus inicializar() {
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<HistoricoDto[]> response = restTemplate.getForEntity(
-				"http://www.mocky.io/v2/598b16861100004905515ec7", HistoricoDto[].class);
-		
+		ResponseEntity<HistoricoDto[]> response = restTemplate
+				.getForEntity("http://www.mocky.io/v2/598b16861100004905515ec7", HistoricoDto[].class);
+
 		List<HistoricoDto> historico = Arrays.asList(response.getBody());
 		historico.forEach(hist -> converterParaPersistir(hist));
-		historico.forEach(hist -> System.out.println(hist.toString()));
-		
-		
+
 		return HttpStatus.OK;
 	}
 
@@ -53,36 +59,39 @@ public class HistoricoController {
 		HistoricoCompras historico = new HistoricoCompras();
 		historico.setCodigo(hist.getCodigo());
 		historico.setData(hist.getData());
-		historico.setCliente(hist.getCliente());
-		this.historicoComprasService.persistir(historico);
-		List<Produto> itens = new ArrayList<>(); 
-		for (ProdutoDto produto : hist.getItens()) {
-			Produto prod = this.produtoService.findByProduto(produto.getProduto());
-			if (prod == null) {
-				prod = new Produto();
-				prod.setPais(produto.getPais());
-				prod.setCategoria(produto.getCategoria());
-				prod.setPreco(produto.getPreco());
-				prod.setVariedade(produto.getVariedade());
-				prod.setSafra(produto.getSafra());
-				prod.setProduto(produto.getProduto());
-				this.produtoService.persistir(prod);
-			}			
-			itens.add(prod);
+
+		Cliente cliente = this.clienteService.findByCpf(hist.getCliente().replace(".", ""));
+		log.info("Buscando cliente com cpf: {}", hist.getCliente().replace(".", ""));
+		if (cliente != null) {
+			log.info("Encontrado cliente: {}", cliente.getCpf());
+			historico.setCliente(cliente);
+			this.historicoComprasService.persistir(historico);
+			
+			log.info("Persistindo historico: {}", historico.getId());
+			List<Item> itens = new ArrayList<>();
+
+			for (ProdutoDto produto : hist.getItens()) {
+				Item item = this.produtoService.findByProduto(produto.getProduto());
+				if (item == null) {
+					item = new Item();
+					item.setPais(produto.getPais());
+					item.setCategoria(produto.getCategoria());
+					item.setPreco(produto.getPreco());
+					item.setVariedade(produto.getVariedade());
+					item.setSafra(produto.getSafra());
+					item.setProduto(produto.getProduto());
+					this.produtoService.persistir(item);
+				}
+				itens.add(item);
+			}
+
+			for (Item item : itens) {
+				Itens itensLista = new Itens();
+				itensLista.setItem(item);
+				itensLista.setHistoricoCompras(historico);
+				this.itensService.persistir(itensLista);
+			}
 		}
-		historico.setItens(itens);
-		this.historicoComprasService.persistir(historico);
-	}
-
-	@GetMapping(value = "/listarTodos")
-	public ResponseEntity<Response<List<Produto>>> listarTodos() {
-		log.info("Listando todos os históricos");
-
-		Response<List<Produto>> response = new Response<>();
-		List<HistoricoCompras> historico = this.historicoComprasService.listarTodos();
-		List<Produto> prd = this.produtoService.listarTodos();
-		response.setData(prd);
-
-		return ResponseEntity.ok(response);
-	}
+		log.info("Persistencia do historico.");
+	}	
 }

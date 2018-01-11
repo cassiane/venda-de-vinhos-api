@@ -22,4 +22,6 @@ public interface ClienteService {
 	Cliente persistir(Cliente cliente);
 	
 	List<Cliente> listarTodos();
+
+	Cliente findByCpf(String cpf);
 }

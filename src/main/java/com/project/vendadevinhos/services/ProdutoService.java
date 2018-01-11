@@ -2,13 +2,13 @@ package com.project.vendadevinhos.services;
 
 import java.util.List;
 
-import com.project.vendadevinhos.api.entities.Produto;
+import com.project.vendadevinhos.api.entities.Item;
 
 public interface ProdutoService {
 	
-	Produto persistir (Produto produto);
+	Item persistir (Item produto);
 
-	Produto findByProduto(String produto);
+	Item findByProduto(String produto);
 
-	List<Produto> listarTodos();
+	List<Item> listarTodos();
 }

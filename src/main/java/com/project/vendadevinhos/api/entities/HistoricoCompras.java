@@ -1,24 +1,29 @@
 package com.project.vendadevinhos.api.entities;
 
-import java.util.List;
-
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class HistoricoCompras {
 
+	private Long id;
 	private String codigo;
 	private String data;
-	private String cliente;
-	private List<Produto> itens;
+	private Cliente cliente;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getCodigo() {
 		return codigo;
 	}
@@ -35,27 +40,13 @@ public class HistoricoCompras {
 		this.data = data;
 	}
 
-	@OneToMany(mappedBy = "historicoCompras", fetch = FetchType.LAZY)
-	public List<Produto> getItens() {
-		return itens;
-	}
-
-	public void setItens(List<Produto> itens) {
-		this.itens = itens;
-	}
-
-	public String getCliente() {
+	@ManyToOne
+	public Cliente getCliente() {
 		return cliente;
 	}
 
-	public void setCliente(String cliente) {
+	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
-	}
-
-	@Override
-	public String toString() {
-		return "HistoricoCompras [codigo=" + codigo + ", data=" + data + ", cliente=" + cliente + ", itens=" + itens
-				+ "]";
 	}
 
 }

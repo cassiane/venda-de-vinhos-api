@@ -2,17 +2,16 @@ package com.project.vendadevinhos.api.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class Cliente {
 
 	private Long id;
 	private String nome;
 	private String cpf;
-	
+//	private HistoricoCompras historicoCompras;
+
 	@Id
 	public Long getId() {
 		return id;
@@ -38,6 +37,14 @@ public class Cliente {
 		this.cpf = cpf;
 	}
 	
+//	@ManyToOne
+//	public HistoricoCompras getHistoricoCompras() {
+//		return historicoCompras;
+//	}
+//
+//	public void setHistoricoCompras(HistoricoCompras historicoCompras) {
+//		this.historicoCompras = historicoCompras;
+//	}
 
 	@Override
 	public String toString() {
