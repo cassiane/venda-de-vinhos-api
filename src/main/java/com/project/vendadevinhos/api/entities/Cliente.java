@@ -1,8 +1,14 @@
 package com.project.vendadevinhos.api.entities;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Cliente {
@@ -10,7 +16,7 @@ public class Cliente {
 	private Long id;
 	private String nome;
 	private String cpf;
-//	private HistoricoCompras historicoCompras;
+	private List<HistoricoCompras> historicoCompras;
 
 	@Id
 	public Long getId() {
@@ -37,18 +43,14 @@ public class Cliente {
 		this.cpf = cpf;
 	}
 	
-//	@ManyToOne
-//	public HistoricoCompras getHistoricoCompras() {
-//		return historicoCompras;
-//	}
-//
-//	public void setHistoricoCompras(HistoricoCompras historicoCompras) {
-//		this.historicoCompras = historicoCompras;
-//	}
+	@JsonIgnore
+	@OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	public List<HistoricoCompras> getHistoricoCompras() {
+		return historicoCompras;
+	}
 
-	@Override
-	public String toString() {
-		return "Cliente [id=" + id + ", nome=" + nome + ", cpf=" + cpf + "]";
+	public void setHistoricoCompras(List<HistoricoCompras> historicoCompras) {
+		this.historicoCompras = historicoCompras;
 	}
 
 }

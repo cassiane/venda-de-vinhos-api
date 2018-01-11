@@ -1,14 +1,19 @@
 package com.project.vendadevinhos.api.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class HistoricoCompras {
+public class HistoricoCompras implements Serializable{
 
+	private static final long serialVersionUID = 1L;
+	
 	private Long id;
 	private String codigo;
 	private String data;
@@ -41,7 +46,7 @@ public class HistoricoCompras {
 		this.data = data;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	public Cliente getCliente() {
 		return cliente;
 	}

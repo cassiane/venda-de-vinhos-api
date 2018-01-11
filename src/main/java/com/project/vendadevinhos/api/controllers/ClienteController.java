@@ -1,5 +1,6 @@
 package com.project.vendadevinhos.api.controllers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.project.vendadevinhos.api.entities.Cliente;
+import com.project.vendadevinhos.api.entities.HistoricoCompras;
 import com.project.vendadevinhos.api.response.Response;
 import com.project.vendadevinhos.services.ClienteService;
+import com.project.vendadevinhos.services.HistoricoComprasService;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -26,6 +29,9 @@ public class ClienteController {
 
 	@Autowired
 	private ClienteService clienteService;
+
+	@Autowired
+	private HistoricoComprasService historicoComprasService;
 
 	@PostMapping(value = "/inicializar")
 	public HttpStatus inicializar() {
@@ -39,25 +45,27 @@ public class ClienteController {
 		return HttpStatus.OK;
 	}
 
-	@GetMapping(value = "/listarTodos")
-	public ResponseEntity<Response<List<Cliente>>> listarTodos() {
-		log.info("Listando todos os clientes");
+	@GetMapping(value = "/listar/ordemDeCompras")
+	public ResponseEntity<Response<List<Cliente>>> listarClientesPeloMaiorValorEmCompras() {
+
 		Response<List<Cliente>> response = new Response<>();
-		List<Cliente> clientes = this.clienteService.listarTodos();
+		List<HistoricoCompras> historicoCompras = this.historicoComprasService.findAllClientesOrderByValorTotalDesc();
+		List<Cliente> clientes = new ArrayList<>();
+		historicoCompras.forEach(historico -> clientes.add(historico.getCliente()));
 		response.setData(clientes);
 		return ResponseEntity.ok(response);
+
 	}
-	//
-	// @GetMapping(value = "/listarPeloMaiorValorEmCompras")
-	// public ResponseEntity<Response<Page<ClienteDto>>>
-	// listarPeloMaiorValorEmCompras() {
-	// log.info("Listando os cliente pelo maior valor em compras.");
-	//
-	// Response<Page<ClienteDto>> response = new Response<Page<ClienteDto>>();
-	// Page<ClienteDto> clientesPage =
-	// this.clienteService.listarClientesOrdenadosMaiorValorCompras();
-	// response.setData(clientesPage);
-	// return ResponseEntity.ok(response);
-	// }
+	
+	@GetMapping(value = "/listar/maiorCompraUltAno")
+	public ResponseEntity<Response<List<Cliente>>> listarClientesComMaiorCompraUltAno() {
+		Response<List<Cliente>> response = new Response<>();
+		List<HistoricoCompras> historicoCompras = this.historicoComprasService.findByAndSort();
+		List<Cliente> clientes = new ArrayList<>();
+		historicoCompras.forEach(historico -> clientes.add(historico.getCliente()));
+		response.setData(clientes);
+		return ResponseEntity.ok(response);
+
+	}
 
 }
