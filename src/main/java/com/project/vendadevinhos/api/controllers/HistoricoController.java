@@ -60,18 +60,22 @@ public class HistoricoController {
 		historico.setCodigo(hist.getCodigo());
 		historico.setData(hist.getData());
 
-		Cliente cliente = this.clienteService.findByCpf(hist.getCliente().replace(".", ""));
-		log.info("Buscando cliente com cpf: {}", hist.getCliente().replace(".", ""));
+		String cpf = hist.getCliente().replace(".", "");
+		cpf = cpf.length() == 11 ? cpf : cpf.substring(1);
+		Cliente cliente = this.clienteService.findByCpf(cpf);
+		log.info("Buscando cliente com cpf: {}", cpf);
 		if (cliente != null) {
 			log.info("Encontrado cliente: {}", cliente.getCpf());
 			historico.setCliente(cliente);
+			historico.setValorTotal(hist.getValorTotal());
 			this.historicoComprasService.persistir(historico);
-			
+
 			log.info("Persistindo historico: {}", historico.getId());
 			List<Item> itens = new ArrayList<>();
 
 			for (ProdutoDto produto : hist.getItens()) {
-				Item item = this.produtoService.findByProduto(produto.getProduto());
+				Item item = this.produtoService.findByProdutoAndVariedadeAndSafra(produto.getProduto(),
+						produto.getVariedade(), produto.getSafra());
 				if (item == null) {
 					item = new Item();
 					item.setPais(produto.getPais());
@@ -80,6 +84,7 @@ public class HistoricoController {
 					item.setVariedade(produto.getVariedade());
 					item.setSafra(produto.getSafra());
 					item.setProduto(produto.getProduto());
+					log.info("Persistindo item: {}", item.toString());
 					this.produtoService.persistir(item);
 				}
 				itens.add(item);
@@ -93,5 +98,5 @@ public class HistoricoController {
 			}
 		}
 		log.info("Persistencia do historico.");
-	}	
+	}
 }

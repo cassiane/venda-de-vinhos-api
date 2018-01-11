@@ -10,4 +10,6 @@ public interface ProdutoRepository extends JpaRepository<Item, Long>{
 
 	Item findByProduto(String produto);
 
+	Item findByProdutoAndVariedadeAndSafra(String produto, String variedade, String safra);
+
 }

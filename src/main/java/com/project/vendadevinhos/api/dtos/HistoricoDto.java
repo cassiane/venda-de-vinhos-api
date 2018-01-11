@@ -7,6 +7,7 @@ public class HistoricoDto {
 	private String data;
 	private String cliente;
 	private List<ProdutoDto> itens;
+	private float valorTotal;
 
 	public String getCodigo() {
 		return codigo;
@@ -38,6 +39,14 @@ public class HistoricoDto {
 
 	public void setItens(List<ProdutoDto> itens) {
 		this.itens = itens;
+	}
+
+	public float getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(float valorTotal) {
+		this.valorTotal = valorTotal;
 	}
 
 	@Override

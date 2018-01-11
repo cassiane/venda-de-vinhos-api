@@ -11,4 +11,6 @@ public interface ProdutoService {
 	Item findByProduto(String produto);
 
 	List<Item> listarTodos();
+
+	Item findByProdutoAndVariedadeAndSafra(String produto, String variedade, String safra);
 }

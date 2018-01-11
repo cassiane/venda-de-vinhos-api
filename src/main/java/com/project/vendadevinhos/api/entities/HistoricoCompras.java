@@ -13,6 +13,7 @@ public class HistoricoCompras {
 	private String codigo;
 	private String data;
 	private Cliente cliente;
+	private float valorTotal;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,4 +50,11 @@ public class HistoricoCompras {
 		this.cliente = cliente;
 	}
 
+	public float getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(float valorTotal) {
+		this.valorTotal = valorTotal;
+	}
 }

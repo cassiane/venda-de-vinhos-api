@@ -29,4 +29,9 @@ public class ProdutoServiceImpl implements ProdutoService{
 		return produtoRepository.findAll();
 	}
 
+	@Override
+	public Item findByProdutoAndVariedadeAndSafra(String produto, String variedade, String safra) {
+		return produtoRepository.findByProdutoAndVariedadeAndSafra(produto, variedade, safra);
+	}
+
 }
